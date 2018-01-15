@@ -4,8 +4,8 @@ class TaskQueue:
     def __init__(self):
         self.q_ = []
 
-    def push(self, task: Task):
-        self.q_.push(task)
+    def append(self, task):
+        self.q_.append(task)
 
     def is_empty(self):
         return len(self.q_) == 0
