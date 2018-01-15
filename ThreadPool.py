@@ -1,28 +1,33 @@
 from threading import *
-
-class Queue:
-    def __init__(self):
-        self.q_ = []
-
-    def push(self, elt):
-        q_.push(elt)
-
-    def front(self):
-
-    def pop_front(self):
-
-class TaskQueue(Queue):
-    def __init__(self):
+from interface import implements, Interface
+from TaskQueue import *
+from Task import *
 
 class ExecutorThread(Thread):
-    def __init__(self, thread_id, condition_var):
+    def __init__(self, thread_id, condition_var, task_queue):
         self.thread_id = thread_id
         self.is_running = False
         self.cv_ = condition_var
+        self.tq_ = task_queue
 
     def run(self):
+        while is_running:
+            self.cv_.acquire()
+            
+            while self.tw_.is_empty():
+                self.cv_.wait()
+            
+            task = self.tq_.pop()
+            self.cv_.release()
+            
+            task.executeTask()
+
+    def start(self):
+        is_running = True
+        super(ExecutorThread, self).start()
 
     def stop(self):
+        is_running = False
 
 class ThreadPool:
     def __init__(self, num_threads):
@@ -31,8 +36,11 @@ class ThreadPool:
         self.tq_ = TaskQueue()
         self.cv_ = threading.Condtion()
 
-    def submit_task(self, task):
+    def submit_task(self, task: Task):
+        self.cv_.acquire()
         self.tq_.push(task)
+        self.cv_.notify()
+        self.cv_.release()
 
     def initialize(self):
         for i in range(num_threads):
