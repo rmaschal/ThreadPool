@@ -15,9 +15,10 @@ class TaskQueue(Queue):
     def __init__(self):
 
 class ExecutorThread(Thread):
-    def __init__(self, thread_id):
+    def __init__(self, thread_id, condition_var):
         self.thread_id = thread_id
         self.is_running = False
+        self.cv_ = condition_var
 
     def run(self):
 
@@ -28,13 +29,14 @@ class ThreadPool:
         self.num_threads = num_threads
         self.threads = []
         self.tq_ = TaskQueue()
+        self.cv_ = threading.Condtion()
 
     def submit_task(self, task):
         self.tq_.push(task)
 
     def initialize(self):
         for i in range(num_threads):
-            thread = ExecutorThread(i)
+            thread = ExecutorThread(i, self.cv_)
             self.threads.push(thread)
 
         for thread in threads:
